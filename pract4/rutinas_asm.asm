@@ -17,28 +17,28 @@
 
 
 .text
-/*	PROCEDIMIENTO QUE RECIBE 4 PARAMETROS
-R0	DIRECCION DEL PRIMER ELEMENTO DE LA MATRIZ
-R1	DIRECCION DEL VECTOR (nª de filas de la matriz = longitud del vector | elementos obntenidos en posiciones del vector = nº de filas )
-R2	VALOR DEL NUMERO DE FILAS DE LA MATRIZ
-R3	VALOR DEL NUMERO DE COLUMNAS DE LA MATRIZ
-*/
+//	PROCEDIMIENTO QUE RECIBE 4 PARAMETROS
+//R0	DIRECCION DEL PRIMER ELEMENTO DE LA MATRIZ
+//R1	DIRECCION DEL VECTOR (nª de filas de la matriz = longitud del vector | elementos obntenidos en posiciones del vector = nº de filas )
+//R2	VALOR DEL NUMERO DE FILAS DE LA MATRIZ
+//R3	VALOR DEL NUMERO DE COLUMNAS DE LA MATRIZ
+
 
 contarUnos:
   		PUSH {R4,R5,R6,R7,R8}	//prologo, subrutina hoja, 2 variabes locales "i" "j", no retorna resultado
  		MOV R4, #0				//inicializar "i"
- 		MOV R5, #0				//auxiliar de intercambio a 0 | auxiliar de nº de 1 en fila
  		MOV R6, #0				//INICIALIZAR "j"
  bucleI:
  		CMP R4, R2 				//for (i=0;i<nfilas;i++)
 		BGE finbucleI
+ 		MOV R5, #0				//auxiliar de intercambio a 0 | auxiliar de nº de 1 en fila
  		STR	R5, [R1,R4,LSL#2] 	// vector[i]=0
 
  bucleJ:
  		CMP R6, R3
  		BGE finbucleJ			//for (j=0; j<ncols; j++)
-		MUL R7, R4, R2			//R7 = i * nfilas
-		ADD R7, R7, R6			//R7 = i * nfilas+ j  (posicion del elemento en la matriz tomada unidimensionalmente)
+		MUL R7, R4, R3			//R7 = i * ncolumnas
+		ADD R7, R7, R6			//R7 = i * ncolumnas+ j  (posicion del elemento en la matriz tomada unidimensionalmente)
 		LDR R8, [R0,R7,LSL#2]	//R8 = mat[i][j]
 		CMP R8, #1				// if(mat[i][j] == 1)
 		BNE not1
@@ -57,6 +57,7 @@ finbucleI:
 		POP {R4,R5,R6,R7,R8}	//epílogo
   		bx lr
 
+		.end
 
  /*
  subrutina void Gray2BinaryMatrix(int orig[N][M], int dest[N][M], int nfilas, int ncols)
@@ -97,4 +98,4 @@ finbucleI:
  		BX LR
 
 
- */
+ *
