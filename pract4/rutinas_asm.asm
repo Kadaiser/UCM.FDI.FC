@@ -12,11 +12,14 @@
 **  Notas de diseño:
 **
 **---------------------------------------------------------------*/
-
 .global contarUnos
+
+.extern ActVector(vector[], valor, pos)
 
 
 .text
+valor:	.word 0
+pos: 	.word 0
 //	PROCEDIMIENTO QUE RECIBE 4 PARAMETROS
 //R0	DIRECCION DEL PRIMER ELEMENTO DE LA MATRIZ
 //R1	DIRECCION DEL VECTOR (nª de filas de la matriz = longitud del vector | elementos obntenidos en posiciones del vector = nº de filas )
@@ -25,7 +28,7 @@
 
 
 contarUnos:
-  		PUSH {R4,R5,R6,R7,R8}	//prologo, subrutina hoja, 2 variabes locales "i" "j", no retorna resultado
+  		PUSH {R4,R5,R6,R7,R8,LR}	//prologo, subrutina hoja, 2 variabes locales "i" "j", no retorna resultado
  		MOV R4, #0				//inicializar "i"
  		MOV R6, #0				//INICIALIZAR "j"
  bucleI:
@@ -40,11 +43,17 @@ contarUnos:
 		MUL R7, R4, R3			//R7 = i * ncolumnas
 		ADD R7, R7, R6			//R7 = i * ncolumnas+ j  (posicion del elemento en la matriz tomada unidimensionalmente)
 		LDR R8, [R0,R7,LSL#2]	//R8 = mat[i][j]
-		CMP R8, #1				// if(mat[i][j] == 1)
-		BNE not1
-		ADD R5, R5, #1			//incremento del numero de 1 encontrados
-		STR R5, [R1,R4,LSL#2]	//vector[i]++
-not1:
+
+		push {R0, R1, R2, R3}
+
+		MOV R0, R1				//PRIMER PARAMETRO DE LA FUNCION vector[]
+		MOV R1, R8				//SEGUNDO PARAMETRO  DE LA FUNCION valor
+		MOV R2, R4				//TERCER PARAMETRO DE LA FUNCION POS
+
+		bl ActVector
+
+		pop {R0, R1, R2, R3}
+
 		ADD R6, R6, #1			//incrementar contador j
 		B bucleJ
 
@@ -54,48 +63,9 @@ finbucleJ:
  		B bucleI
 
 finbucleI:
-		POP {R4,R5,R6,R7,R8}	//epílogo
+		POP {R4,R5,R6,R7,R8,LR}	//epílogo
   		bx lr
 
 		.end
 
- /*
- subrutina void Gray2BinaryMatrix(int orig[N][M], int dest[N][M], int nfilas, int ncols)
 
-
- .global Gray2BinaryMatrix
-
- .text
-
- /*
- R0		DIRECCION DE LA MATRIZ ORIGINAL DE GRISES
- R1		DIRECCION DE LA AMTRIZ DESTINO DE BLANCO/NEGRO
- R2		VALOR DEL NUMERO DE FILAS DE LA MATRIZ
- R3		VALOR DEL NUMERO DE COLUMNAS DE LA MATRIZ
- */
-
- /*
- Gray2BinaryMatrix:
- 		PUSH {R4,R5,R6,R7,R8}
- 		MOV R4, #0			//inicializar contador de i
- 		MOV R5, #0			//inicializar contador de j
- 		mov R6, #127		//inicializa UMBRAL
-
- buclefor1:
- 		CMP R4, R2			// for (i=0;i<nfilas;i++)
- 		BGE finfor1
- buclefor2:
- 		CMP R5, R3			// for (j=0; j<ncols; j++)
- 		BGE finfor2
-
- 		B buclefor2
-
- finfor2:
- 		B buclefor1
-
- finfor1:
- 		POP {R4,R5,R6,R7,R8}
- 		BX LR
-
-
- *

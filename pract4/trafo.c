@@ -2,6 +2,8 @@
 #include "trafo.h"
 #include "types.h"
 
+
+
 //-----------------------------------------------------------------------------------
 //Las funciones que se definan en ensamblador deberán borrarse de este fichero
 //de otra manera habría dos definciones de la misma función
@@ -42,8 +44,15 @@ void contarUnos(int mat[N][M], int vector[], int nfilas, int ncols) {
     for (i=0;i<nfilas;i++) {
         vector[i]=0;
         for (j=0; j<ncols; j++) {
-            if ( mat[i][j] == 1) vector[i]++;
+        valor =mat[i,j];
+        ActVector(Vector[],valor,i)
+           // if ( mat[i][j] == 1) vector[i]++;
         }
     }
 }
 */
+
+
+extern void ActVector(int vector[], int valor, int pos){
+	if(valor == 1) vector[pos]++;
+}
